@@ -155,10 +155,6 @@ export abstract class BaseAccountAPI {
    * actual overhead depends on the expected bundle size
    */
   async getPreVerificationGas (userOp: Partial<UserOperationStruct>): Promise<number> {
-    if (userOp.preVerificationGas) {
-      // @ts-ignore
-      return userOp.preVerificationGas
-    }
     const p = await resolveProperties(userOp)
     return calcPreVerificationGas(p, this.overheads)
   }
@@ -268,18 +264,20 @@ export abstract class BaseAccountAPI {
     }
 
     let paymasterAndData: string | undefined
+    let preVerificationGas: number | undefined
     if (this.paymasterAPI != null) {
       // fill (partial) preVerificationGas (all except the cost of the generated paymasterAndData)
+      preVerificationGas = await this.getPreVerificationGas(partialUserOp)
       const userOpForPm = {
         ...partialUserOp,
-        preVerificationGas: await this.getPreVerificationGas(partialUserOp)
+        preVerificationGas: preVerificationGas
       }
       paymasterAndData = await this.paymasterAPI.getPaymasterAndData(userOpForPm)
     }
     partialUserOp.paymasterAndData = paymasterAndData ?? '0x'
     return {
       ...partialUserOp,
-      preVerificationGas: this.getPreVerificationGas(partialUserOp),
+      preVerificationGas: preVerificationGas ?? this.getPreVerificationGas(partialUserOp),
       signature: ''
     }
   }

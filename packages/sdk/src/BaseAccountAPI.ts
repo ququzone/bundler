@@ -155,6 +155,10 @@ export abstract class BaseAccountAPI {
    * actual overhead depends on the expected bundle size
    */
   async getPreVerificationGas (userOp: Partial<UserOperationStruct>): Promise<number> {
+    if (userOp.preVerificationGas) {
+      // @ts-ignore
+      return userOp.preVerificationGas
+    }
     const p = await resolveProperties(userOp)
     return calcPreVerificationGas(p, this.overheads)
   }

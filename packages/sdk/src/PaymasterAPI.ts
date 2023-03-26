@@ -13,4 +13,8 @@ export class PaymasterAPI {
   async getPaymasterAndData (userOp: Partial<UserOperationStruct>): Promise<string | undefined> {
     return '0x'
   }
+
+  async getPreVerificationGas (userOp: Partial<UserOperationStruct>): Promise<number> {
+    return 0
+  }
 }

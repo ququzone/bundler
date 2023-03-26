@@ -267,10 +267,10 @@ export abstract class BaseAccountAPI {
     let preVerificationGas: number | undefined
     if (this.paymasterAPI != null) {
       // fill (partial) preVerificationGas (all except the cost of the generated paymasterAndData)
-      preVerificationGas = await this.getPreVerificationGas(partialUserOp)
+      preVerificationGas = await this.paymasterAPI.getPreVerificationGas(partialUserOp)
       const userOpForPm = {
         ...partialUserOp,
-        preVerificationGas: preVerificationGas
+        preVerificationGas
       }
       paymasterAndData = await this.paymasterAPI.getPaymasterAndData(userOpForPm)
     }
